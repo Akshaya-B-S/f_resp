@@ -1,120 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Whiteboard Pro - Interactive</title>
+    <title>DevOps Dashboard</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f0f2f5; overflow: hidden; }
-        header { background-color: #333; color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; }
-        
-        /* Dashboard Reference image_12a7cc.png */
-        #dashboard { padding: 40px; max-width: 1200px; margin: 0 auto; text-align: center; }
-        .hero { background: white; border-radius: 12px; padding: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .btn-main { background: #555; color: white; border: none; padding: 12px 25px; border-radius: 20px; cursor: pointer; font-weight: bold; }
-
-        /* Whiteboard Reference image_2b31ab.png */
-        #whiteboard { width: 100vw; height: 100vh; background-color: #fff; display: none; position: relative; }
-        .canvas-grid { 
-            width: 100%; height: 100%; 
-            background-image: radial-gradient(#d1d1d1 1px, transparent 1px); 
-            background-size: 25px 25px; 
-        }
-        .toolbar {
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            background: white; padding: 10px 20px; border-radius: 10px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; gap: 20px; z-index: 10;
-        }
-        .tool-btn { cursor: pointer; font-size: 1.2rem; border: none; background: none; }
-        .tool-btn:hover { color: #0078d4; }
-
-        /* Movable Elements */
-        .sticky {
-            position: absolute; width: 150px; height: 150px; background: #fdfd96; 
-            border: 1px solid #e0e0e0; padding: 10px; cursor: move; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-        }
-        .handwriting { position: absolute; font-family: 'Brush Script MT', cursive; font-size: 50px; cursor: move; }
-        .hidden { display: none; }
+        body { font-family: sans-serif; background: #f4f4f4; text-align: center; padding: 50px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: inline-block; }
+        .btn { background: #333; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; display: block; margin-top: 20px; }
     </style>
 </head>
 <body>
-
-    <!-- Dashboard -->
-    <div id="dashboard">
-        <header><strong>Whiteboard Pro</strong> <span>Guest User</span></header>
-        <div class="hero">
-            <h1>Your Creative Space</h1>
-            <p>Save your work locally in the browser.</p>
-            <button class="btn-main" onclick="startApp()">+ New Board</button>
-        </div>
+    <div class="card">
+        <h1>Whiteboard Pro Dashboard</h1>
+        <p>Status: <strong>Connected to GitHub & Jenkins</strong></p>
+        <!-- In a real DevOps setup, this button triggers the JAR execution -->
+        <a href="#" class="btn" onclick="alert('To run: Use terminal and type: mvn javafx:run')">Open JavaFX Whiteboard</a>
     </div>
-
-    <!-- Whiteboard -->
-    <div id="whiteboard">
-        <div class="toolbar">
-            <button class="tool-btn" onclick="addNote()">📝 Note</button>
-            <button class="tool-btn" onclick="saveWork()">💾 Save Work</button>
-            <button class="tool-btn" onclick="clearStorage()">🗑️ Reset</button>
-            <button class="tool-btn" onclick="location.reload()">🏠 Home</button>
-        </div>
-        <div class="canvas-grid" id="canvas">
-            <!-- Saved items will load here -->
-        </div>
-    </div>
-
-    <script>
-        function startApp() {
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('whiteboard').style.display = 'block';
-            loadWork();
-        }
-
-        // Add a new sticky note
-        function addNote(text = "New Note", x = 100, y = 100) {
-            const note = document.createElement('div');
-            note.className = 'sticky';
-            note.contentEditable = true;
-            note.innerText = text;
-            note.style.left = x + 'px';
-            note.style.top = y + 'px';
-            
-            // Basic Drag Logic
-            note.onmousedown = function(e) {
-                let shiftX = e.clientX - note.getBoundingClientRect().left;
-                let shiftY = e.clientY - note.getBoundingClientRect().top;
-                document.onmousemove = function(e) {
-                    note.style.left = e.clientX - shiftX + 'px';
-                    note.style.top = e.clientY - shiftY + 'px';
-                };
-                document.onmouseup = () => document.onmousemove = null;
-            };
-            document.getElementById('canvas').appendChild(note);
-        }
-
-        // Save to Local Storage
-        function saveWork() {
-            const notes = [];
-            document.querySelectorAll('.sticky').forEach(n => {
-                notes.push({ text: n.innerText, x: n.style.left, y: n.style.top });
-            });
-            localStorage.setItem('whiteboard_data', JSON.stringify(notes));
-            alert("Work saved to Browser Storage!");
-        }
-
-        // Load from Local Storage
-        function loadWork() {
-            const data = JSON.parse(localStorage.getItem('whiteboard_data'));
-            if (data) {
-                data.forEach(n => addNote(n.text, parseInt(n.x), parseInt(n.y)));
-            } else {
-                // Default items from image_2b31ab.png
-                addNote("Devops", 400, 300);
-            }
-        }
-
-        function clearStorage() {
-            localStorage.removeItem('whiteboard_data');
-            location.reload();
-        }
-    </script>
 </body>
 </html>
