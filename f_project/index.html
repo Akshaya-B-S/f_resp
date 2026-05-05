@@ -2,134 +2,118 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Whiteboard Pro - Combined App</title>
+    <title>Whiteboard Pro - Interactive</title>
     <style>
-        /* Shared Styles */
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; overflow-x: hidden; }
-        header { background-color: #333; color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 100; position: relative; }
-        .hidden { display: none !important; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f0f2f5; overflow: hidden; }
+        header { background-color: #333; color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Dashboard Reference image_12a7cc.png */
+        #dashboard { padding: 40px; max-width: 1200px; margin: 0 auto; text-align: center; }
+        .hero { background: white; border-radius: 12px; padding: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-main { background: #555; color: white; border: none; padding: 12px 25px; border-radius: 20px; cursor: pointer; font-weight: bold; }
 
-        /* Dashboard Styles - Reference image_12a7cc.png */
-        #dashboard-page { padding: 40px; max-width: 1200px; margin: 0 auto; }
-        .hero-section { background: white; border-radius: 12px; padding: 40px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 30px; }
-        .hero-section p { color: #666; margin: 10px 0 20px; }
-        .btn-new { background-color: #555; color: white; border: none; padding: 10px 25px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 1rem; }
-        .boards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .board-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; }
-        .board-card:hover { transform: translateY(-5px); border: 1px solid #333; }
-
-        /* Whiteboard Styles - Reference image_2b31ab.png */
-        #whiteboard-page { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; background-color: #fff; }
-        .canvas-grid {
-            width: 100%; height: 100%;
-            background-image: radial-gradient(#d1d1d1 1px, transparent 1px);
-            background-size: 25px 25px;
-            position: relative;
+        /* Whiteboard Reference image_2b31ab.png */
+        #whiteboard { width: 100vw; height: 100vh; background-color: #fff; display: none; position: relative; }
+        .canvas-grid { 
+            width: 100%; height: 100%; 
+            background-image: radial-gradient(#d1d1d1 1px, transparent 1px); 
+            background-size: 25px 25px; 
         }
         .toolbar {
             position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            background: white; padding: 12px 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            display: flex; gap: 20px; align-items: center; z-index: 10;
+            background: white; padding: 10px 20px; border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; gap: 20px; z-index: 10;
         }
-        .tool { cursor: pointer; font-size: 1.2rem; transition: 0.2s; }
-        .tool:hover { color: #0078d4; scale: 1.2; }
+        .tool-btn { cursor: pointer; font-size: 1.2rem; border: none; background: none; }
+        .tool-btn:hover { color: #0078d4; }
 
-        /* Elements on Canvas - Reference image_2b31ab.png */
-        .sticky-note {
-            position: absolute; width: 160px; height: 160px;
-            background: #f8f9fa; border-radius: 12px; padding: 15px;
-            box-shadow: 3px 3px 10px rgba(0,0,0,0.08); border: 1px solid #e0e0e0;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center;
+        /* Movable Elements */
+        .sticky {
+            position: absolute; width: 150px; height: 150px; background: #fdfd96; 
+            border: 1px solid #e0e0e0; padding: 10px; cursor: move; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
         }
-        .handwritten-text {
-            position: absolute; font-family: 'Brush Script MT', cursive; font-size: 55px; 
-            color: #222; user-select: none;
-        }
-        .btn-back { position: absolute; top: 20px; left: 20px; background: #333; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 11; }
+        .handwriting { position: absolute; font-family: 'Brush Script MT', cursive; font-size: 50px; cursor: move; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- Header Section -->
-    <header id="app-header">
-        <div style="display: flex; align-items: center;">
-            <span style="font-size: 1.8rem; margin-right: 12px;">⚙️</span>
-            <strong style="font-size: 1.2rem;">Whiteboard Pro</strong>
-        </div>
-        <div>Guest User</div>
-    </header>
-
-    <!-- Dashboard Page -->
-    <div id="dashboard-page">
-        <div class="hero-section">
+    <!-- Dashboard -->
+    <div id="dashboard">
+        <header><strong>Whiteboard Pro</strong> <span>Guest User</span></header>
+        <div class="hero">
             <h1>Your Creative Space</h1>
-            <p>No login • No backend • Simple UI</p>
-            <button class="btn-new" onclick="openBoard('New Board')">+ New Board</button>
-        </div>
-
-        <h2>Your Boards</h2>
-        <div class="boards-grid">
-            <div class="board-card" onclick="openBoard('Sample Board')">
-                <h3>Sample Board</h3>
-                <span>Just now</span>
-            </div>
-            <div class="board-card" onclick="openBoard('Ideas Board')">
-                <h3>Ideas Board</h3>
-                <span>Today</span>
-            </div>
+            <p>Save your work locally in the browser.</p>
+            <button class="btn-main" onclick="startApp()">+ New Board</button>
         </div>
     </div>
 
-    <!-- Whiteboard Interface Page -->
-    <div id="whiteboard-page" class="hidden">
-        <button class="btn-back" onclick="showDashboard()">← Back</button>
-        
+    <!-- Whiteboard -->
+    <div id="whiteboard">
         <div class="toolbar">
-            <span class="tool" title="Delete">🗑️</span>
-            <span class="tool" title="Pencil">✏️</span>
-            <span class="tool" title="Selection">⬆️</span>
-            <span class="tool" title="Circle">⭕</span>
-            <span class="tool" title="Rectangle">⬜</span>
-            <span class="tool" title="Text">A</span>
-            <span class="tool" title="Export">📤</span>
+            <button class="tool-btn" onclick="addNote()">📝 Note</button>
+            <button class="tool-btn" onclick="saveWork()">💾 Save Work</button>
+            <button class="tool-btn" onclick="clearStorage()">🗑️ Reset</button>
+            <button class="tool-btn" onclick="location.reload()">🏠 Home</button>
         </div>
-
-        <div class="canvas-grid">
-            <!-- Sticky Notes Replicated from Source -->
-            <div class="sticky-note" style="top: 15%; left: 35%;">
-                <p style="color: #aaa;">Write note</p>
-            </div>
-            
-            <div class="sticky-note" style="top: 45%; left: 35%;">
-                <h3 style="margin: 0;">Devops</h3>
-                <p style="color: #aaa; font-size: 0.8rem;">Write note</p>
-            </div>
-
-            <!-- Handwriting Style Text Replicated from Source -->
-            <div class="handwritten-text" style="top: 35%; left: 15%; transform: rotate(-3deg);">
-                CI CD
-            </div>
-            
-            <div class="handwritten-text" style="top: 55%; left: 55%; transform: rotate(5deg); font-size: 70px;">
-                Jenkin
-            </div>
+        <div class="canvas-grid" id="canvas">
+            <!-- Saved items will load here -->
         </div>
     </div>
 
     <script>
-        function openBoard(name) {
-            document.getElementById('dashboard-page').classList.add('hidden');
-            document.getElementById('app-header').classList.add('hidden');
-            document.getElementById('whiteboard-page').classList.remove('hidden');
-            console.log("Opening: " + name);
+        function startApp() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('whiteboard').style.display = 'block';
+            loadWork();
         }
 
-        function showDashboard() {
-            document.getElementById('whiteboard-page').classList.add('hidden');
-            document.getElementById('dashboard-page').classList.remove('hidden');
-            document.getElementById('app-header').classList.remove('hidden');
+        // Add a new sticky note
+        function addNote(text = "New Note", x = 100, y = 100) {
+            const note = document.createElement('div');
+            note.className = 'sticky';
+            note.contentEditable = true;
+            note.innerText = text;
+            note.style.left = x + 'px';
+            note.style.top = y + 'px';
+            
+            // Basic Drag Logic
+            note.onmousedown = function(e) {
+                let shiftX = e.clientX - note.getBoundingClientRect().left;
+                let shiftY = e.clientY - note.getBoundingClientRect().top;
+                document.onmousemove = function(e) {
+                    note.style.left = e.clientX - shiftX + 'px';
+                    note.style.top = e.clientY - shiftY + 'px';
+                };
+                document.onmouseup = () => document.onmousemove = null;
+            };
+            document.getElementById('canvas').appendChild(note);
+        }
+
+        // Save to Local Storage
+        function saveWork() {
+            const notes = [];
+            document.querySelectorAll('.sticky').forEach(n => {
+                notes.push({ text: n.innerText, x: n.style.left, y: n.style.top });
+            });
+            localStorage.setItem('whiteboard_data', JSON.stringify(notes));
+            alert("Work saved to Browser Storage!");
+        }
+
+        // Load from Local Storage
+        function loadWork() {
+            const data = JSON.parse(localStorage.getItem('whiteboard_data'));
+            if (data) {
+                data.forEach(n => addNote(n.text, parseInt(n.x), parseInt(n.y)));
+            } else {
+                // Default items from image_2b31ab.png
+                addNote("Devops", 400, 300);
+            }
+        }
+
+        function clearStorage() {
+            localStorage.removeItem('whiteboard_data');
+            location.reload();
         }
     </script>
 </body>
