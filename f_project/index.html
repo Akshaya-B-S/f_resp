@@ -3,181 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevOps Creative Suite</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Whiteboard Pro - Combined App</title>
     <style>
-        :root {
-            --primary: #6366f1;
-            --bg: #0f172a;
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.1);
+        /* Shared Styles */
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; overflow-x: hidden; }
+        header { background-color: #333; color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 100; position: relative; }
+        .hidden { display: none !important; }
+
+        /* Dashboard Styles - Reference image_12a7cc.png */
+        #dashboard-page { padding: 40px; max-width: 1200px; margin: 0 auto; }
+        .hero-section { background: white; border-radius: 12px; padding: 40px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .hero-section p { color: #666; margin: 10px 0 20px; }
+        .btn-new { background-color: #555; color: white; border: none; padding: 10px 25px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        .boards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .board-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; }
+        .board-card:hover { transform: translateY(-5px); border: 1px solid #333; }
+
+        /* Whiteboard Styles - Reference image_2b31ab.png */
+        #whiteboard-page { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; background-color: #fff; }
+        .canvas-grid {
+            width: 100%; height: 100%;
+            background-image: radial-gradient(#d1d1d1 1px, transparent 1px);
+            background-size: 25px 25px;
+            position: relative;
         }
-
-        body, html {
-            margin: 0; padding: 0; height: 100%;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg); color: white; overflow: hidden;
+        .toolbar {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            background: white; padding: 12px 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            display: flex; gap: 20px; align-items: center; z-index: 10;
         }
+        .tool { cursor: pointer; font-size: 1.2rem; transition: 0.2s; }
+        .tool:hover { color: #0078d4; scale: 1.2; }
 
-        /* --- DASHBOARD VIEW (PAGE 1) --- */
-        #dashboard-view {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Elements on Canvas - Reference image_2b31ab.png */
+        .sticky-note {
+            position: absolute; width: 160px; height: 160px;
+            background: #f8f9fa; border-radius: 12px; padding: 15px;
+            box-shadow: 3px 3px 10px rgba(0,0,0,0.08); border: 1px solid #e0e0e0;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center;
         }
-
-        .hero-section { text-align: center; margin-bottom: 50px; animation: fadeInDown 0.8s ease; }
-        
-        .grid { display: grid; grid-template-columns: repeat(2, 280px); gap: 25px; }
-
-        .nav-card {
-            background: var(--glass); border: 1px solid var(--glass-border);
-            padding: 40px 30px; border-radius: 24px; cursor: pointer;
-            text-align: center; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
+        .handwritten-text {
+            position: absolute; font-family: 'Brush Script MT', cursive; font-size: 55px; 
+            color: #222; user-select: none;
         }
-
-        .nav-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            background: rgba(255, 255, 255, 0.06);
-            border-color: var(--primary);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        /* --- WHITEBOARD VIEW (PAGE 2) --- */
-        #whiteboard-view { 
-            position: fixed; top: 0; left: 100%; width: 100%; height: 100vh; 
-            display: flex; background: #050810;
-            transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        #sidebar {
-            width: 85px; background: var(--glass); border-right: 1px solid var(--glass-border);
-            display: flex; flex-direction: column; align-items: center; padding: 20px 0;
-            backdrop-filter: blur(20px); z-index: 100;
-        }
-
-        .tool-btn {
-            width: 50px; height: 50px; margin-bottom: 15px; border-radius: 14px;
-            border: 1px solid var(--glass-border); background: transparent;
-            color: white; cursor: pointer; transition: 0.3s; font-size: 18px;
-        }
-
-        .tool-btn:hover, .tool-btn.active { background: var(--primary); border-color: var(--primary); transform: scale(1.1); }
-
-        #canvas-container { flex-grow: 1; position: relative; }
-        canvas { width: 100%; height: 100%; cursor: crosshair; }
-
-        /* Floating Info Panel */
-        .status-panel {
-            position: absolute; top: 20px; right: 20px; 
-            background: var(--glass); padding: 12px 20px; border-radius: 12px;
-            border: 1px solid var(--glass-border); font-size: 12px; backdrop-filter: blur(5px);
-        }
-
-        /* Logic for Page Switching */
-        .show-whiteboard #dashboard-view { transform: translateX(-100%); }
-        .show-whiteboard #whiteboard-view { left: 0; }
-
-        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-back { position: absolute; top: 20px; left: 20px; background: #333; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 11; }
     </style>
 </head>
 <body>
 
-<!-- PAGE 1: DASHBOARD -->
-<div id="dashboard-view">
-    <div class="hero-section">
-        <h1>Creative Workspace</h1>
-        <p style="color: #94a3b8;">Central Hub for DevOps Visuals</p>
-    </div>
-    
-    <div class="grid">
-        <div class="nav-card" onclick="toggleView(true)">
-            <div style="font-size: 40px; margin-bottom: 15px;">✨</div>
-            <h3>New Whiteboard</h3>
-            <p style="font-size: 12px; color: #64748b;">Start a fresh session</p>
+    <!-- Header Section -->
+    <header id="app-header">
+        <div style="display: flex; align-items: center;">
+            <span style="font-size: 1.8rem; margin-right: 12px;">⚙️</span>
+            <strong style="font-size: 1.2rem;">Whiteboard Pro</strong>
         </div>
-        <div class="nav-card" onclick="alert('Previous work: AI Disease System, RFID Counter')">
-            <div style="font-size: 40px; margin-bottom: 15px;">📂</div>
-            <h3>Previous Work</h3>
-            <p style="font-size: 12px; color: #64748b;">Review saved assets</p>
+        <div>Guest User</div>
+    </header>
+
+    <!-- Dashboard Page -->
+    <div id="dashboard-page">
+        <div class="hero-section">
+            <h1>Your Creative Space</h1>
+            <p>No login • No backend • Simple UI</p>
+            <button class="btn-new" onclick="openBoard('New Board')">+ New Board</button>
+        </div>
+
+        <h2>Your Boards</h2>
+        <div class="boards-grid">
+            <div class="board-card" onclick="openBoard('Sample Board')">
+                <h3>Sample Board</h3>
+                <span>Just now</span>
+            </div>
+            <div class="board-card" onclick="openBoard('Ideas Board')">
+                <h3>Ideas Board</h3>
+                <span>Today</span>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- PAGE 2: WHITEBOARD SUITE -->
-<div id="whiteboard-view">
-    <nav id="sidebar">
-        <button class="tool-btn active" title="Brush">🖌️</button>
-        <button class="tool-btn" title="Shapes" onclick="drawRect()">⬜</button>
-        <input type="color" id="colorPicker" value="#6366f1" style="width: 40px; height: 40px; margin-bottom: 15px; cursor: pointer; border: none; background: none;">
-        <button class="tool-btn" onclick="addText()" title="Text">T</button>
-        <button class="tool-btn" onclick="clearCanvas()" title="Clear">🧹</button>
-        <button class="tool-btn" style="margin-top: auto;" onclick="toggleView(false)" title="Exit">🏠</button>
-    </nav>
-
-    <div id="canvas-container">
-        <div class="status-panel">
-            <span style="color: #4ade80;">● Pipeline Active</span><br>
-            <span style="color: #94a3b8;">Syncing to GitHub...</span>
+    <!-- Whiteboard Interface Page -->
+    <div id="whiteboard-page" class="hidden">
+        <button class="btn-back" onclick="showDashboard()">← Back</button>
+        
+        <div class="toolbar">
+            <span class="tool" title="Delete">🗑️</span>
+            <span class="tool" title="Pencil">✏️</span>
+            <span class="tool" title="Selection">⬆️</span>
+            <span class="tool" title="Circle">⭕</span>
+            <span class="tool" title="Rectangle">⬜</span>
+            <span class="tool" title="Text">A</span>
+            <span class="tool" title="Export">📤</span>
         </div>
-        <canvas id="mainCanvas"></canvas>
+
+        <div class="canvas-grid">
+            <!-- Sticky Notes Replicated from Source -->
+            <div class="sticky-note" style="top: 15%; left: 35%;">
+                <p style="color: #aaa;">Write note</p>
+            </div>
+            
+            <div class="sticky-note" style="top: 45%; left: 35%;">
+                <h3 style="margin: 0;">Devops</h3>
+                <p style="color: #aaa; font-size: 0.8rem;">Write note</p>
+            </div>
+
+            <!-- Handwriting Style Text Replicated from Source -->
+            <div class="handwritten-text" style="top: 35%; left: 15%; transform: rotate(-3deg);">
+                CI CD
+            </div>
+            
+            <div class="handwritten-text" style="top: 55%; left: 55%; transform: rotate(5deg); font-size: 70px;">
+                Jenkin
+            </div>
+        </div>
     </div>
-</div>
 
-<script>
-    const canvas = document.getElementById('mainCanvas');
-    const ctx = canvas.getContext('2d');
-    let drawing = false;
-
-    // Toggle between Dashboard and Whiteboard
-    function toggleView(isWhiteboard) {
-        if (isWhiteboard) {
-            document.body.classList.add('show-whiteboard');
-            setTimeout(resize, 600); // Wait for animation to finish
-        } else {
-            document.body.classList.remove('show-whiteboard');
+    <script>
+        function openBoard(name) {
+            document.getElementById('dashboard-page').classList.add('hidden');
+            document.getElementById('app-header').classList.add('hidden');
+            document.getElementById('whiteboard-page').classList.remove('hidden');
+            console.log("Opening: " + name);
         }
-    }
 
-    function resize() {
-        canvas.width = window.innerWidth - 85;
-        canvas.height = window.innerHeight;
-    }
-
-    window.addEventListener('resize', resize);
-
-    // Drawing Logic
-    canvas.addEventListener('mousedown', () => drawing = true);
-    canvas.addEventListener('mouseup', () => { drawing = false; ctx.beginPath(); });
-    canvas.addEventListener('mousemove', draw);
-
-    function draw(e) {
-        if (!drawing) return;
-        ctx.lineWidth = 3;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = document.getElementById('colorPicker').value;
-        ctx.lineTo(e.clientX - 85, e.clientY);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(e.clientX - 85, e.clientY);
-    }
-
-    function drawRect() {
-        ctx.strokeStyle = document.getElementById('colorPicker').value;
-        ctx.strokeRect(200, 200, 150, 100); // Standard Flow Map shape
-    }
-
-    function addText() {
-        const text = prompt("Enter text for the note:");
-        if (text) {
-            ctx.fillStyle = "white";
-            ctx.font = "18px Plus Jakarta Sans";
-            ctx.fillText(text, 150, 150);
+        function showDashboard() {
+            document.getElementById('whiteboard-page').classList.add('hidden');
+            document.getElementById('dashboard-page').classList.remove('hidden');
+            document.getElementById('app-header').classList.remove('hidden');
         }
-    }
-
-    function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
-</script>
+    </script>
 </body>
 </html>
