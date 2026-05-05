@@ -16,7 +16,7 @@
     </properties>
 
     <dependencies>
-        <!-- Java Servlet API: Fixes the 'cannot find symbol' errors -->
+        <!-- Java Servlet API -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -24,11 +24,17 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- JUnit for Testing (Standard for DevOps pipelines) -->
+        <!-- JUnit 5 (Jupiter) - Fixes the test compilation errors -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -45,7 +51,6 @@
                     <target>17</target>
                 </configuration>
             </plugin>
-            <!-- Plugin to handle WAR file creation without web.xml if needed -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
