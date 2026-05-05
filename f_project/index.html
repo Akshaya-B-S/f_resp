@@ -3,46 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Design Whiteboard</title>
+    <title>Creative Suite Whiteboard</title>
     <style>
-        :root { --primary: #2563eb; --danger: #ef4444; --bg: #f1f5f9; --dark: #0f172a; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); overflow: hidden; }
-        
-        #dashboard { padding: 40px; max-width: 1200px; margin: 0 auto; height: 100vh; overflow-y: auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .btn-create { background: var(--primary); color: white; border: none; padding: 12px 28px; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 24px; }
-        .board-card { background: white; border-radius: 12px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid #e2e8f0; }
-        .board-card:hover { transform: translateY(-4px); box-shadow: 0 12px 20px -5px rgba(0,0,0,0.1); }
-        .preview { height: 150px; background: white; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #f1f5f9; }
-        .preview img { max-width: 100%; max-height: 100%; }
-        .board-info { padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+        :root { 
+            --primary: #2563eb; 
+            --danger: #ef4444; 
+            --dark: #0f172a; 
+            --glass: rgba(255, 255, 255, 0.9);
+        }
 
-        #app { display: none; height: 100vh; flex-direction: column; }
-        .toolbar { background: var(--dark); color: white; padding: 12px 24px; display: flex; gap: 15px; align-items: center; z-index: 100; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .tool-group { display: flex; align-items: center; gap: 10px; border-right: 1px solid #334155; padding-right: 15px; }
-        
-        select, input[type="color"] { padding: 8px; border-radius: 6px; border: none; background: #334155; color: white; cursor: pointer; }
-        .toggle-container { display: flex; align-items: center; gap: 5px; font-size: 13px; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            overflow: hidden;
+            /* Animated Background */
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-        .canvas-container { flex-grow: 1; position: relative; background: #94a3b8; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        canvas { background: white; border-radius: 4px; cursor: crosshair; }
-        
-        .btn { padding: 10px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Dashboard Centering */
+        #dashboard { 
+            background: var(--glass);
+            padding: 40px; 
+            max-width: 1000px; 
+            width: 90%;
+            max-height: 85vh;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+            text-align: center;
+        }
+
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 30px; 
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 20px;
+        }
+
+        .btn-create { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 12px 28px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .btn-create:hover { transform: scale(1.05); }
+
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+            gap: 24px; 
+            justify-items: center;
+        }
+
+        .board-card { 
+            background: white; 
+            border-radius: 16px; 
+            overflow: hidden; 
+            transition: 0.3s; 
+            cursor: pointer; 
+            border: 1px solid #e2e8f0;
+            width: 100%;
+        }
+
+        .board-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); 
+        }
+
+        /* App Layout Centering */
+        #app { 
+            display: none; 
+            width: 95vw;
+            height: 90vh;
+            background: var(--glass);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .toolbar { 
+            background: var(--dark); 
+            color: white; 
+            padding: 15px 30px; 
+            display: flex; 
+            gap: 15px; 
+            align-items: center; 
+        }
+
+        .tool-group { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            border-right: 1px solid #334155; 
+            padding-right: 15px; 
+        }
+
+        .canvas-container { 
+            flex-grow: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px;
+            background: rgba(148, 163, 184, 0.2);
+        }
+
+        canvas { 
+            background: white; 
+            border-radius: 8px; 
+            cursor: crosshair;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        select, input[type="color"] { padding: 8px; border-radius: 8px; border: none; background: #334155; color: white; }
+        .btn { padding: 10px 18px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; }
         .btn-back { background: #334155; color: white; }
         .btn-clear { background: var(--danger); color: white; }
     </style>
 </head>
 <body>
 
+    <!-- SECTION 1: DASHBOARD -->
     <div id="dashboard">
         <div class="header">
-            <h1>My Designs</h1>
-            <button class="btn-create" onclick="createNewBoard()">+ New Canvas</button>
+            <h1>Creative Workspace</h1>
+            <button class="btn-create" onclick="createNewBoard()">+ New Project</button>
         </div>
         <div id="boardsGrid" class="grid"></div>
     </div>
 
+    <!-- SECTION 2: WHITEBOARD APP -->
     <div id="app">
         <div class="toolbar">
             <button class="btn btn-back" onclick="showDashboard()">Dashboard</button>
@@ -52,19 +163,16 @@
                     <option value="marker">Marker</option>
                     <option value="rect">Rectangle</option>
                     <option value="circle">Circle</option>
-                    <option value="arrow">Arrow</option>
                     <option value="note">Solid Note (+ Text)</option>
                 </select>
             </div>
             <div class="tool-group">
-                <input type="color" id="colorPicker" value="#000000">
-                <div class="toggle-container">
-                    <input type="checkbox" id="fillToggle"> <label for="fillToggle">Fill Shape</label>
-                </div>
+                <input type="color" id="colorPicker" value="#2563eb">
+                <label style="font-size: 12px;"><input type="checkbox" id="fillToggle"> Fill</label>
                 <input type="range" id="sizePicker" min="1" max="20" value="3">
             </div>
             <button class="btn btn-clear" onclick="clearCanvas()">Clear</button>
-            <span id="currentBoardTitle" style="margin-left: auto; font-weight: 500; color: #94a3b8;"></span>
+            <span id="currentBoardTitle" style="margin-left: auto; color: #94a3b8;"></span>
         </div>
         <div class="canvas-container"><canvas id="canvas"></canvas></div>
     </div>
@@ -72,38 +180,37 @@
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        let drawing = false;
-        let currentBoardId = null;
-        let lastX = 0, lastY = 0;
-        let startX, startY;
-        let snapshot;
+        let drawing = false, currentBoardId = null, lastX = 0, lastY = 0, startX, startY, snapshot;
 
         function loadBoards() {
-            const boards = JSON.parse(localStorage.getItem('whiteboards_vfinal') || '{}');
+            const boards = JSON.parse(localStorage.getItem('whiteboards_v_pro') || '{}');
             const grid = document.getElementById('boardsGrid');
             grid.innerHTML = '';
             Object.keys(boards).reverse().forEach(id => {
                 const card = document.createElement('div');
-                card.className = 'board-card'; card.onclick = () => openBoard(id);
-                card.innerHTML = `<div class="preview"><img src="${boards[id].image || ''}"></div>
-                    <div class="board-info"><strong>${boards[id].name}</strong><button onclick="event.stopPropagation(); deleteBoard('${id}')" style="color:var(--danger); border:none; background:none; cursor:pointer;">Delete</button></div>`;
+                card.className = 'board-card';
+                card.onclick = () => openBoard(id);
+                card.innerHTML = `<div style="height:140px; background:#fff; display:flex; align-items:center; justify-content:center; border-bottom:1px solid #eee;">
+                    <img src="${boards[id].image || ''}" style="max-width:100%; max-height:100%;"></div>
+                    <div style="padding:15px; display:flex; justify-content:space-between; align-items:center;">
+                    <strong>${boards[id].name}</strong><button onclick="event.stopPropagation(); deleteBoard('${id}')" style="color:var(--danger); border:none; background:none; cursor:pointer;">Delete</button></div>`;
                 grid.appendChild(card);
             });
         }
 
         function createNewBoard() {
-            const name = prompt("Name:", "New Design");
+            const name = prompt("Project Name:", "Design " + new Date().toLocaleTimeString());
             if (!name) return;
             const id = 'id_' + Date.now();
-            const boards = JSON.parse(localStorage.getItem('whiteboards_vfinal') || '{}');
+            const boards = JSON.parse(localStorage.getItem('whiteboards_v_pro') || '{}');
             boards[id] = { name: name, image: '' };
-            localStorage.setItem('whiteboards_vfinal', JSON.stringify(boards));
+            localStorage.setItem('whiteboards_v_pro', JSON.stringify(boards));
             openBoard(id);
         }
 
         function openBoard(id) {
             currentBoardId = id;
-            const boards = JSON.parse(localStorage.getItem('whiteboards_vfinal') || '{}');
+            const boards = JSON.parse(localStorage.getItem('whiteboards_v_pro') || '{}');
             document.getElementById('currentBoardTitle').innerText = boards[id].name;
             document.getElementById('dashboard').style.display = 'none';
             document.getElementById('app').style.display = 'flex';
@@ -115,16 +222,16 @@
         }
 
         function resizeCanvas() {
-            canvas.width = window.innerWidth * 0.9;
-            canvas.height = window.innerHeight * 0.8;
+            canvas.width = window.innerWidth * 0.85;
+            canvas.height = window.innerHeight * 0.75;
             ctx.lineCap = 'round'; ctx.lineJoin = 'round';
         }
 
         function saveCurrentBoard() {
             if (!currentBoardId) return;
-            const boards = JSON.parse(localStorage.getItem('whiteboards_vfinal') || '{}');
+            const boards = JSON.parse(localStorage.getItem('whiteboards_v_pro') || '{}');
             boards[currentBoardId].image = canvas.toDataURL();
-            localStorage.setItem('whiteboards_vfinal', JSON.stringify(boards));
+            localStorage.setItem('whiteboards_v_pro', JSON.stringify(boards));
         }
 
         canvas.onmousedown = (e) => {
@@ -140,25 +247,19 @@
         canvas.onmousemove = (e) => {
             if (!drawing) return;
             const tool = document.getElementById('toolSelector').value;
-            const isFilled = document.getElementById('fillToggle').checked;
-
             if (tool === 'pencil' || tool === 'marker') {
                 ctx.globalAlpha = (tool === 'marker') ? 0.3 : 1.0;
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY); // The secret to full lines!
-                ctx.lineTo(e.offsetX, e.offsetY);
-                ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke();
                 [lastX, lastY] = [e.offsetX, e.offsetY];
             } else {
                 ctx.putImageData(snapshot, 0, 0);
-                drawShape(tool, e.offsetX, e.offsetY, isFilled);
+                drawShape(tool, e.offsetX, e.offsetY, document.getElementById('fillToggle').checked);
             }
         };
 
         canvas.onmouseup = (e) => {
-            const tool = document.getElementById('toolSelector').value;
-            if (drawing && tool === 'note') {
-                const text = prompt("Text for Note:");
+            if (drawing && document.getElementById('toolSelector').value === 'note') {
+                const text = prompt("Note Text:");
                 if (text) {
                     ctx.fillStyle = "white"; ctx.font = "bold 16px Arial"; ctx.textAlign = "center";
                     ctx.fillText(text, startX + (e.offsetX - startX)/2, startY + (e.offsetY - startY)/2 + 5);
@@ -173,19 +274,12 @@
                 (isFilled || tool === 'note') ? ctx.fillRect(startX, startY, curX - startX, curY - startY) : ctx.strokeRect(startX, startY, curX - startX, curY - startY);
             } else if (tool === 'circle') {
                 let r = Math.sqrt(Math.pow(startX - curX, 2) + Math.pow(startY - curY, 2));
-                ctx.arc(startX, startY, r, 0, 2 * Math.PI);
-                isFilled ? ctx.fill() : ctx.stroke();
-            } else if (tool === 'arrow') {
-                const head = 15; const angle = Math.atan2(curY - startY, curX - startX);
-                ctx.moveTo(startX, startY); ctx.lineTo(curX, curY);
-                ctx.lineTo(curX - head * Math.cos(angle - Math.PI/6), curY - head * Math.sin(angle - Math.PI/6));
-                ctx.moveTo(curX, curY);
-                ctx.lineTo(curX - head * Math.cos(angle + Math.PI/6), curY - head * Math.sin(angle + Math.PI/6));
-                ctx.stroke();
+                ctx.arc(startX, startY, r, 0, 2 * Math.PI); isFilled ? ctx.fill() : ctx.stroke();
             }
         }
 
         function showDashboard() { saveCurrentBoard(); document.getElementById('dashboard').style.display = 'block'; document.getElementById('app').style.display = 'none'; loadBoards(); }
+        function deleteBoard(id) { if(confirm("Delete?")) { const b = JSON.parse(localStorage.getItem('whiteboards_v_pro')); delete b[id]; localStorage.setItem('whiteboards_v_pro', JSON.stringify(b)); loadBoards(); } }
         function clearCanvas() { if(confirm("Clear?")) { ctx.clearRect(0,0,canvas.width,canvas.height); saveCurrentBoard(); } }
         loadBoards();
     </script>
