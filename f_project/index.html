@@ -1,19 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>DevOps Dashboard</title>
-    <style>
-        body { font-family: sans-serif; background: #f4f4f4; text-align: center; padding: 50px; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: inline-block; }
-        .btn { background: #333; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; display: block; margin-top: 20px; }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h1>Whiteboard Pro Dashboard</h1>
-        <p>Status: <strong>Connected to GitHub & Jenkins</strong></p>
-        <!-- In a real DevOps setup, this button triggers the JAR execution -->
-        <a href="#" class="btn" onclick="alert('To run: Use terminal and type: mvn javafx:run')">Open JavaFX Whiteboard</a>
-    </div>
-</body>
-</html>
+// Add this inside your <script> tag to "Store" the drawing
+function saveToLocalStorage() {
+    localStorage.setItem('savedCanvas', canvas.toDataURL());
+}
+
+function loadFromLocalStorage() {
+    const dataURL = localStorage.getItem('savedCanvas');
+    if (dataURL) {
+        const img = new Image();
+        img.src = dataURL;
+        img.onload = () => ctx.drawImage(img, 0, 0);
+    }
+}
+
+// Call load on startup
+loadFromLocalStorage();
+
+// Call saveToLocalStorage() inside the stopDrawing function
+function stopDrawing() {
+    drawing = false;
+    ctx.beginPath();
+    saveToLocalStorage(); // Saves every time you lift the mouse
+}
